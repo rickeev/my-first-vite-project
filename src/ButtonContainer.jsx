@@ -1,6 +1,6 @@
 export default function ButtonContainer({ children }) {
   return (
-    <div className="btn-container">
+    <div className="button-container">
       {children}
     </div>
   )
