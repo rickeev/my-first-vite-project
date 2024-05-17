@@ -1,20 +1,43 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Count from "./Count";
-import CountButtons from "./CountButtons";
+import ButtonContainer from "./ButtonContainer";
 import Reset from "./Reset";
 import Title from "./Title";
+import CountButton from "./CountButton";
 
 export default function Card() {
   const [count, setCount] = useState(0);
+  const locked = count === 5 ? true : false;
+
+  // Runs once when the component mounts if the array [] at the end is empty
+  useEffect(() => {
+    const handleKeydown = (event) => {
+      if (event.code === 'Space') {
+        const newCount = count + 1
+        if (newCount > 5) {
+          setCount(0)
+          return
+        }
+        setCount(newCount)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeydown)
+
+    return () => {
+      window.removeEventListener('keydown', handleKeydown)
+    }
+  }, [count])
 
   return (
-    <main>
-      <div className="card">
-        <Title />
-        <Count count={count} />
-        <Reset />
-        <CountButtons setCount={setCount} />
-      </div>
-    </main>
+    <div className={`card ${locked ? 'card--limit' : ''}`}>
+      <Title locked={locked} />
+      <Count count={count} />
+      <Reset setCount={setCount} />
+      <ButtonContainer>
+        <CountButton type="minus" setCount={setCount} locked={locked} />
+        <CountButton type="plus" setCount={setCount} locked={locked} />
+      </ButtonContainer>
+    </div>
   )
 }
